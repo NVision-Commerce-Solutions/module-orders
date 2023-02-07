@@ -1,0 +1,478 @@
+<?php
+/** @var \Commerce365\Orders\Block\OrderList  $block */
+$totalResults = 0;
+$orders = [];
+
+$ordersResponse = $this->getOrders();
+if (!empty($ordersResponse)) {
+    $orders = $ordersResponse["salesDocuments"];
+    $totalResults = $ordersResponse["totalResults"];
+}
+?>
+
+<div class="table-wrapper orders-history">
+<?php if (count($orders) > 0): ?>
+    <form action="<?= $this->getFilterActionUrl() ?>" method="get">
+        <div class="search-form-fields">
+            <input type="text" placeholder="<?= __('Search...') ?>" name="searchString"/>
+            <button type="submit" title="<?= __('Search') ?>" class="action primary">
+                <span><?= __('Search') ?></span>
+            </button>
+        </div>
+    </form>
+    <?php if ($this->getSearchString()): ?>
+        <?= __('Current filter')?>: <?= $this->getSearchString()?>
+        <a href="<?= $this->getFilterActionUrl()?>"><?= __('Reset') ?></a>
+    <?php endif; ?>
+    <table class="data table table-order-items history" id="my-orders-table">
+        <thead>
+        <tr>
+            <th scope="col" class="col id">
+                <a href="<?= $this->getSortLink('No.')?>">
+                    <?= __('Order #') ?>
+                    <?= $this->getSortIcon('No.') ?>
+                </a>
+            </th>
+            <th scope="col" class="col id">
+                <a href="<?= $this->getSortLink('Status')?>">
+                    <?= __('Status') ?>
+                    <?= $this->getSortIcon('Status') ?>
+                </a>
+            </th>
+            <th scope="col" class="col date">
+                <a href="<?= $this->getSortLink('Document Date')?>">
+                    <?= __('Date') ?>
+                    <?= $this->getSortIcon('Document Date') ?>
+                </a>
+            </th>
+            <th scope="col" class="col shipping">
+                <a href="<?= $this->getSortLink('Ship-to Name')?>">
+                    <?= __('Bill To') ?>
+                    <?= $this->getSortIcon('Ship-to Name') ?>
+                </a>
+            </th>
+            <th scope="col" class="col total">
+                <a href="<?= $this->getSortLink('Amount Including VAT')?>">
+                    <?= __('Order Total') ?>
+                    <?= $this->getSortIcon('Amount Including VAT') ?>
+                </a>
+            </th>
+            <th scope="col" class="col actions">&nbsp;</th>
+        </tr>
+        </thead>
+        <tbody>
+        <?php foreach ($orders as $order): ?>
+            <tr>
+                <td data-th="Order #" class="col id"><?= $order["No."] ?></td>
+                <td data-th="Status" class="col status"><?= $block->getOrderStatus($order) ?></td>
+                <td data-th="Date" class="col date"><?= date_format(date_create($order["Document Date"]), "d-m-Y") ?></td>
+                <td data-th="Ship To #" class="col id"><?= $order["Ship-to Name"] ?></td>
+                <td data-th="Total" class="col total"><?= $order["Currency Code"] ?> <?= number_format((float)$order["Amount Including VAT"], 2, ',', '.') ?></td>
+                <td data-th="Actions" class="col actions">
+                    <a href="<?= $this->getViewUrl(urlencode($order["id"])) ?>" class="action view">
+                        <span><?= __("View Order") ?></span>
+                    </a>
+                    <a href="<?= $order["PDFUrl"] ?>" class="action order" target="_blank">
+                        <span>PDF</span>
+                    </a>
+                </td>
+             </tr>
+        <?php endforeach; ?>
+        </tbody>
+    </table>
+<?php else: ?>
+    <div class="message info empty"><span><?= __('No orders found.') ?></span></div>
+<?php endif; ?>
+</div>
+
+<?php if ($totalResults > $block->getPageSize()): ?>
+    <div>
+       <?= __('Page:') ?> <?= $block->getPage() ?> <?= __('of') ?> <?= $ordersResponse["totalPages"] ?>
+    </div>
+    <div>
+        <?php if ($block->getPage() > 1): ?>
+        <a href="<?= $this->getPreviousPageUrl() ?>" class="action order"><?= __('Previous') ?></a>
+        <?php endif; ?>
+        <?php if ($block->getPage() > 1 && $block->getPage() < $ordersResponse["totalPages"]): ?>
+            -
+        <?php endif; ?>
+        <?php if ($block->getPage() < $ordersResponse["totalPages"]): ?>
+        <a href="<?= $this->getNextPageUrl() ?>" class="action order"><?= __('Next') ?></a>
+        <?php endif; ?>
+    </div>
+<?php endif; ?>
+
+<!--
+
+Below is a list of all sales order header fields
+All these fields are available in the API response, as well as any custom field added by customer/partner/other ISV
+
+"id": "CF62B3CE-1E04-EB11-81A2-E016CCC29A3B",
+"Document Type": 1,
+"Sell-to Customer No.": "C00010",
+"No.": "101030",
+"Bill-to Customer No.": "C00010",
+"Bill-to Name": "Signify HQ",
+"Bill-to Name 2": "",
+"Bill-to Address": "High Tech Campus 48",
+"Bill-to Address 2": "",
+"Bill-to City": "Eindhoven",
+"Bill-to Contact": "Frits Philips",
+"Your Reference": "",
+"Ship-to Code": "",
+"Ship-to Name": "Signify HQ",
+"Ship-to Name 2": "",
+"Ship-to Address": "High Tech Campus 48",
+"Ship-to Address 2": "",
+"Ship-to City": "Eindhoven",
+"Ship-to Contact": "Frits Philips",
+"Order Date": "2020-10-01",
+"Posting Date": "2020-10-01",
+"Shipment Date": "2020-10-01",
+"Posting Description": "Order 101030",
+"Payment Terms Code": "14 DAYS",
+"Due Date": "2020-10-15",
+"Payment Discount %": 0,
+"Pmt. Discount Date": "2020-10-01",
+"Shipment Method Code": "CFR",
+"Location Code": "MAIN",
+"Shortcut Dimension 1 Code": "",
+"Shortcut Dimension 2 Code": "",
+"Customer Posting Group": "EU",
+"Currency Code": "EUR",
+"Currency Factor": 1.548467017652524,
+"Customer Price Group": "",
+"Prices Including VAT": false,
+"Invoice Disc. Code": "C00010",
+"Customer Disc. Group": "",
+"Language Code": "",
+"Salesperson Code": "",
+"Order Class": "",
+"Comment": false,
+"No. Printed": 0,
+"On Hold": "",
+"Applies-to Doc. Type": 0,
+"Applies-to Doc. No.": "",
+"Bal. Account No.": "",
+"Recalculate Invoice Disc.": true,
+"Ship": false,
+"Invoice": false,
+"Print Posted Documents": false,
+"Amount": 871.48,
+"Amount Including VAT": 871.48,
+"Shipping No.": "",
+"Posting No.": "",
+"Last Shipping No.": "",
+"Last Posting No.": "",
+"Prepayment No.": "",
+"Last Prepayment No.": "",
+"Prepmt. Cr. Memo No.": "",
+"Last Prepmt. Cr. Memo No.": "",
+"VAT Registration No.": "",
+"Combine Shipments": false,
+"Reason Code": "",
+"Gen. Bus. Posting Group": "EU",
+"EU 3-Party Trade": false,
+"Transaction Type": "",
+"Transport Method": "",
+"VAT Country/Region Code": "NL",
+"Sell-to Customer Name": "Signify HQ",
+"Sell-to Customer Name 2": "",
+"Sell-to Address": "High Tech Campus 48",
+"Sell-to Address 2": "",
+"Sell-to City": "Eindhoven",
+"Sell-to Contact": "Frits Philips",
+"Bill-to Post Code": "5656 AE",
+"Bill-to County": "",
+"Bill-to Country/Region Code": "NL",
+"Sell-to Post Code": "5656 AE",
+"Sell-to County": "",
+"Sell-to Country/Region Code": "NL",
+"Ship-to Post Code": "5656 AE",
+"Ship-to County": "",
+"Ship-to Country/Region Code": "NL",
+"Bal. Account Type": 0,
+"Exit Point": "",
+"Correction": false,
+"Document Date": "2020-10-01",
+"External Document No.": "",
+"Area": "",
+"Transaction Specification": "",
+"Payment Method Code": "BANK",
+"Shipping Agent Code": "DHL",
+"Package Tracking No.": "",
+"No. Series": "S-ORD",
+"Posting No. Series": "S-INV+",
+"Shipping No. Series": "S-SHPT",
+"Tax Area Code": "",
+"Tax Liable": false,
+"VAT Bus. Posting Group": "EU",
+"Reserve": 1,
+"Applies-to ID": "",
+"VAT Base Discount %": 0,
+"Status": 0,
+"Invoice Discount Calculation": 0,
+"Invoice Discount Value": 0,
+"Send IC Document": false,
+"IC Status": 0,
+"Sell-to IC Partner Code": "",
+"Bill-to IC Partner Code": "",
+"IC Direction": 0,
+"Prepayment %": 0,
+"Prepayment No. Series": "",
+"Compress Prepayment": true,
+"Prepayment Due Date": "2020-10-15",
+"Prepmt. Cr. Memo No. Series": "",
+"Prepmt. Posting Description": "",
+"Prepmt. Pmt. Discount Date": "2020-10-01",
+"Prepmt. Payment Terms Code": "14 DAYS",
+"Prepmt. Payment Discount %": 0,
+"Quote No.": "",
+"Quote Valid Until Date": "0001-01-01",
+"Quote Sent to Customer": "0001-01-01T00:00:00",
+"Quote Accepted": false,
+"Quote Accepted Date": "0001-01-01",
+"Job Queue Status": 0,
+"Job Queue Entry ID": "{00000000-0000-0000-0000-000000000000}",
+"Incoming Document Entry No.": 0,
+"Last Email Sent Time": "0001-01-01T00:00:00",
+"Last Email Sent Status": 0,
+"Sent as Email": false,
+"Last Email Notif Cleared": false,
+"IsTest": false,
+"Sell-to Phone No.": "+31 (0) 40 275 0000",
+"Sell-to E-Mail": "frits@signify.com",
+"Payment Instructions Id": 3,
+"Amt. Ship. Not Inv. (LCY)": 0,
+"Amt. Ship. Not Inv. (LCY) Base": 0,
+"Dimension Set ID": 0,
+"Payment Service Set ID": 0,
+"Direct Debit Mandate ID": "",
+"Invoice Discount Amount": 0,
+"No. of Archived Versions": 0,
+"Doc. No. Occurrence": 1,
+"Campaign No.": "",
+"Sell-to Customer Template Code": "",
+"Sell-to Contact No.": "CT000024",
+"Bill-to Contact No.": "CT000024",
+"Bill-to Customer Template Code": "",
+"Opportunity No.": "",
+"Responsibility Center": "",
+"Shipping Advice": 0,
+"Shipped Not Invoiced": false,
+"Completely Shipped": false,
+"Posting from Whse. Ref.": 0,
+"Location Filter": "",
+"Shipped": false,
+"Last Shipment Date": "0001-01-01",
+"Requested Delivery Date": "2020-10-05",
+"Promised Delivery Date": "0001-01-01",
+"Shipping Agent Service Code": "STANDARD",
+"Late Order Shipping": true,
+"Date Filter": "0001-01-01",
+"Receive": false,
+"Return Receipt No.": "",
+"Return Receipt No. Series": "",
+"Last Return Receipt No.": "",
+"Price Calculation Method": 1,
+"Allow Line Disc.": true,
+"Get Shipment Used": false,
+"Assigned User ID": "",
+"NC365 Staging Order No.": "",
+"NC365 Store Code": "",
+"Lines": []
+"PDFUrl": "https://commerce365.blob.core.windows.net/123456789/Order_101030_9FC9231F-8078-423A-B115-C31910169667.pdf",
+"TableNo": 36,
+"CustomerId": 6,
+
+-->
+
+<!--
+
+Below is a list of all sales order line fields
+
+"Document Type": 1,
+"Sell-to Customer No.": "C00010",
+"Document No.": "101030",
+"Line No.": 10000,
+"Type": 2,
+"No.": "1906-S",
+"Location Code": "MAIN",
+"Posting Group": "RESALE",
+"Shipment Date": "2020-10-03",
+"Description": "ATHENS Mobile Pedestal",
+"Description 2": "",
+"Unit of Measure": "Piece",
+"Quantity": 2,
+"Outstanding Quantity": 2,
+"Qty. to Invoice": 2,
+"Qty. to Ship": 2,
+"Unit Price": 435.739,
+"Unit Cost (LCY)": 219.5,
+"VAT %": 0,
+"Line Discount %": 0,
+"Line Discount Amount": 0,
+"Amount": 871.48,
+"Amount Including VAT": 871.48,
+"Allow Invoice Disc.": true,
+"Gross Weight": 19.67,
+"Net Weight": 17.1,
+"Units per Parcel": 0,
+"Unit Volume": 0.26,
+"Appl.-to Item Entry": 0,
+"Shortcut Dimension 1 Code": "",
+"Shortcut Dimension 2 Code": "",
+"Customer Price Group": "",
+"Job No.": "",
+"Work Type Code": "",
+"Recalculate Invoice Disc.": true,
+"Outstanding Amount": 871.48,
+"Qty. Shipped Not Invoiced": 0,
+"Shipped Not Invoiced": 0,
+"Quantity Shipped": 0,
+"Quantity Invoiced": 0,
+"Shipment No.": "",
+"Shipment Line No.": 0,
+"Profit %": 21.99716,
+"Bill-to Customer No.": "C00010",
+"Inv. Discount Amount": 0,
+"Purchase Order No.": "",
+"Purch. Order Line No.": 0,
+"Drop Shipment": false,
+"Gen. Bus. Posting Group": "EU",
+"Gen. Prod. Posting Group": "RETAIL",
+"VAT Calculation Type": 1,
+"Transaction Type": "",
+"Transport Method": "",
+"Attached to Line No.": 0,
+"Exit Point": "",
+"Area": "",
+"Transaction Specification": "",
+"Tax Category": "",
+"Tax Area Code": "",
+"Tax Liable": false,
+"Tax Group Code": "",
+"VAT Clause Code": "",
+"VAT Bus. Posting Group": "EU",
+"VAT Prod. Posting Group": "STANDARD",
+"Currency Code": "EUR",
+"Outstanding Amount (LCY)": 562.8,
+"Shipped Not Invoiced (LCY)": 0,
+"Shipped Not Inv. (LCY) No VAT": 0,
+"Reserved Quantity": 0,
+"Reserve": 1,
+"Blanket Order No.": "",
+"Blanket Order Line No.": 0,
+"VAT Base Amount": 871.48,
+"Unit Cost": 339.889,
+"System-Created Entry": false,
+"Line Amount": 871.48,
+"VAT Difference": 0,
+"Inv. Disc. Amount to Invoice": 0,
+"VAT Identifier": "STANDARD",
+"IC Partner Ref. Type": 0,
+"IC Partner Reference": "",
+"Prepayment %": 0,
+"Prepmt. Line Amount": 0,
+"Prepmt. Amt. Inv.": 0,
+"Prepmt. Amt. Incl. VAT": 0,
+"Prepayment Amount": 0,
+"Prepmt. VAT Base Amt.": 0,
+"Prepayment VAT %": 0,
+"Prepmt. VAT Calc. Type": 0,
+"Prepayment VAT Identifier": "",
+"Prepayment Tax Area Code": "",
+"Prepayment Tax Liable": false,
+"Prepayment Tax Group Code": "",
+"Prepmt Amt to Deduct": 0,
+"Prepmt Amt Deducted": 0,
+"Prepayment Line": false,
+"Prepmt. Amount Inv. Incl. VAT": 0,
+"Prepmt. Amount Inv. (LCY)": 0,
+"IC Partner Code": "",
+"Prepmt. VAT Amount Inv. (LCY)": 0,
+"Prepayment VAT Difference": 0,
+"Prepmt VAT Diff. to Deduct": 0,
+"Prepmt VAT Diff. Deducted": 0,
+"Pmt. Discount Amount": 0,
+"Line Discount Calculation": 0,
+"Dimension Set ID": 0,
+"Qty. to Assemble to Order": 0,
+"Qty. to Asm. to Order (Base)": 0,
+"ATO Whse. Outstanding Qty.": 0,
+"ATO Whse. Outstd. Qty. (Base)": 0,
+"Job Task No.": "",
+"Job Contract Entry No.": 0,
+"Posting Date": "2020-10-01",
+"Deferral Code": "",
+"Returns Deferral Start Date": "0001-01-01",
+"Variant Code": "",
+"Bin Code": "",
+"Qty. per Unit of Measure": 1,
+"Planned": false,
+"Unit of Measure Code": "PCS",
+"Quantity (Base)": 2,
+"Outstanding Qty. (Base)": 2,
+"Qty. to Invoice (Base)": 2,
+"Qty. to Ship (Base)": 2,
+"Qty. Shipped Not Invd. (Base)": 0,
+"Qty. Shipped (Base)": 0,
+"Qty. Invoiced (Base)": 0,
+"Reserved Qty. (Base)": 0,
+"FA Posting Date": "0001-01-01",
+"Depreciation Book Code": "",
+"Depr. until FA Posting Date": false,
+"Duplicate in Depreciation Book": "",
+"Use Duplication List": false,
+"Responsibility Center": "",
+"Out-of-Stock Substitution": false,
+"Substitution Available": false,
+"Originally Ordered No.": "",
+"Originally Ordered Var. Code": "",
+"Cross-Reference No.": "",
+"Unit of Measure (Cross Ref.)": "",
+"Cross-Reference Type": 0,
+"Cross-Reference Type No.": "",
+"Item Category Code": "TABLE",
+"Nonstock": false,
+"Purchasing Code": "",
+"Special Order": false,
+"Special Order Purchase No.": "",
+"Special Order Purch. Line No.": 0,
+"Whse. Outstanding Qty.": 0,
+"Whse. Outstanding Qty. (Base)": 0,
+"Completely Shipped": false,
+"Requested Delivery Date": "2020-10-05",
+"Promised Delivery Date": "0001-01-01",
+"Planned Delivery Date": "2020-10-05",
+"Planned Shipment Date": "2020-10-03",
+"Shipping Agent Code": "DHL",
+"Shipping Agent Service Code": "STANDARD",
+"Allow Item Charge Assignment": true,
+"Qty. to Assign": 0,
+"Qty. Assigned": 0,
+"Return Qty. to Receive": 0,
+"Return Qty. to Receive (Base)": 0,
+"Return Qty. Rcd. Not Invd.": 0,
+"Ret. Qty. Rcd. Not Invd.(Base)": 0,
+"Return Rcd. Not Invd.": 0,
+"Return Rcd. Not Invd. (LCY)": 0,
+"Return Qty. Received": 0,
+"Return Qty. Received (Base)": 0,
+"Appl.-from Item Entry": 0,
+"BOM Item No.": "",
+"Return Receipt No.": "",
+"Return Receipt Line No.": 0,
+"Return Reason Code": "",
+"Copied From Posted Doc.": false,
+"Price Calculation Method": 1,
+"Allow Line Disc.": true,
+"Customer Disc. Group": "",
+"Subtype": 0,
+"Price description": "",
+"Attached Doc Count": 0,
+"NC365 Web Order Line": false,
+"NC365 Staging Order No.": "",
+"NC365 Staging Order Line No.": 0
+
+-->

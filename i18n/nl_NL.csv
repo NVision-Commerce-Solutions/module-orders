@@ -1,0 +1,45 @@
+"My Orders", "Orders"
+"My Orders", "Order Informatie"
+"My Quotes", "Offertes"
+"My Shipments", "Verzendingen"
+"My Invoices", "Facturen"
+"My Credit Memos", "Creditnota's"
+"My Transactions", "Transacties"
+
+"Order #", "Ordernr."
+"Date", "Datum"
+"Bill To", "Factureren aan"
+"Order Total", "Totaal"
+
+"Open", "Openstaand"
+"Released", "Vrijgegeven"
+"Pending Approval", "Wacht op goedkeuring"
+"Pending Prepayment", "Aanbetaling goedgekeurd"
+
+"View Order", "Bestelling bekijken"
+
+"No orders found.", "Er zijn geen bestellingen gevonden."
+
+"Previous", "Vorige"
+"Next", "Volgende"
+
+
+"Order date:", "Order datum:"
+"Download PDF", "Download PDF"
+
+"Items Ordered", "Bestelde producten"
+"Product Name", "Product naam"
+"SKU", "Artikelnr."
+"Price", "Prijs"
+"Qty", "Aantal"
+"Subtotal", "Subtotaal"
+
+"VAT", "BTW"
+"Grand Total", "Totaal"
+
+"Back to My Orders", "Terug naar mijn bestellingen"
+"Order Information", "Bestelinformatie"
+"Shipping Address", "Verzendadres"
+"Shipping Method", "Verzendmethode"
+"Billing Address", "Factuuradres"
+"Payment Method", "Betaalmethode"
