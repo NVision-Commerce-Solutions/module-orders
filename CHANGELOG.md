@@ -6,6 +6,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.1.0] - 2023-07-31
 ### Added
 - composer.json
 - Hyvä compatibility (thanks to @siteation)
@@ -13,5 +14,5 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 - Removed docs from .phtml to docs folder
 
-## [0.0.0] - 2023-02-11
+## [1.0.0] - 2023-02-11
 Initial release 🎉
