@@ -9,8 +9,7 @@ use Magento\Framework\Escaper;
 $order = $block->getOrder();
 $orderLines = $order["Lines"];
 $status = $block->getOrderStatus($order);
-$trackingUrl = $order['TX Tracking Url'] ?? '';
-$showTracking = $block->isModuleEnabled();
+$trackingUrl = $order['Package Tracking URL SCNVN'] ?? '';
 ?>
 
 <div class="md:flex md:justify-between items-center mb-3">
@@ -38,19 +37,12 @@ $showTracking = $block->isModuleEnabled();
     </div>
 </div>
 
-
-<?php if ($showTracking ): ?>
 <?php if ($trackingUrl !== ''): ?>
 <div class="message success message-success">
     <a href="<?= $escaper-> escapeUrl($trackingUrl) ?>" class="action order" target="_blank" rel="noopener noreferrer">
-        <span><?= $escaper->escapeHtml(__('Track & Trace (By ShipIT 365)'))?></span>
+        <span><?= $escaper->escapeHtml(__('Track & Trace (By Commerce 365 for Sendcloud)'))?></span>
     </a>
 </div>
-<?php else: ?>
-<div class="message info message-info">
-    <span><?= $escaper->escapeHtml(__('No Track & Trace info available yet.')) ?></span>
-</div>
-<?php endif; ?>
 <?php endif; ?>
 
 <div class="order-details-items ordered">
