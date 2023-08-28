@@ -4,10 +4,8 @@
 $order = $this->getOrder();
 $orderLines = $order["Lines"];
 $status = $block->getOrderStatus($order);
-
-$trackingUrl = $order['TX Tracking Url'] ?? '';
+$trackingUrl = $order['Package Tracking URL SCNVN'] ?? '';
 ?>
-
 
 <div class="page-title-wrapper">
     <h1 class="page-title">
@@ -26,11 +24,7 @@ $trackingUrl = $order['TX Tracking Url'] ?? '';
         </a>
         <?php if ($trackingUrl !== ''): ?>
         <a href="<?php echo $trackingUrl ?>" class="action order" target="_blank">
-            <span><?php echo __('Track & Trace (By ShipIT 365)') ?></span>
-        </a>
-        <?php else: ?>
-        <a href="" class="action order" target="_blank">
-            <span><?php echo __('No Track & Trace info available yet.') ?></span>
+            <span><?php echo __('Track & Trace (By Commerce 365 for Sendcloud)') ?></span>
         </a>
         <?php endif; ?>
     </div>
