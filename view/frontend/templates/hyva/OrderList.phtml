@@ -1,0 +1,126 @@
+<?php declare(strict_types=1);
+
+use Commerce365\Orders\Block\OrderList;
+use Magento\Framework\Escaper;
+
+/** @var OrderList  $block */
+/** @var Escaper $escaper */
+
+$totalResults = 0;
+$orders = [];
+$ordersResponse = $block->getOrders();
+
+if (!empty($ordersResponse)) {
+    $orders = $ordersResponse["salesDocuments"];
+    $totalResults = $ordersResponse["totalResults"];
+}
+?>
+
+<div class="orders-history">
+    <div class="text-2xl mb-6"><?= $escaper->escapeHtml(__('My Orders')) ?></div>
+    <?php if (count($orders) > 0): ?>
+    <form action="<?= $escaper->escapeUrl($block->getFilterActionUrl()) ?>" method="get">
+        <div class="search-form-fields mb-4">
+            <input type="text" class="form-input w-full md:w-96"
+                placeholder="<?= $escaper->escapeHtml(__('Search...')) ?>" name="searchString">
+            <button type="submit" title="<?= $escaper->escapeHtml(__('Search')) ?>" class="btn btn-primary">
+                <span><?= $escaper->escapeHtml(__('Search')) ?></span>
+            </button>
+        </div>
+    </form>
+    <?php if ($block->getSearchString()): ?>
+    <?= $escaper->escapeHtml(__('Current filter')) ?>: <?= $escaper->escapeHtml($block->getSearchString()) ?>
+    <a href="<?= $escaper->escapeUrl($block->getFilterActionUrl()) ?>"><?= $escaper->escapeHtml(__('Reset')) ?></a>
+    <?php endif; ?>
+    <div class="card mb-6 overflow-x-auto">
+        <table id="my-orders-table" class="w-full">
+            <thead>
+                <tr>
+                    <th scope="col" class="col id p-2 text-left">
+                        <a href="<?= $block->getSortLink('No.')?>">
+                            <?= $escaper->escapeHtml(__('Order #')) ?>
+                            <?= $block->getSortIcon('No.') ?>
+                        </a>
+                    </th>
+                    <th scope="col" class="col id p-2 text-left">
+                        <a href="<?= $block->getSortLink('Status')?>">
+                            <?= $escaper->escapeHtml(__('Status')) ?>
+                            <?= $block->getSortIcon('Status') ?>
+                        </a>
+                    </th>
+                    <th scope="col" class="col id p-2 text-left">
+                        <a href="<?= $block->getSortLink('Document Date')?>">
+                            <?= $escaper->escapeHtml(__('Date')) ?>
+                            <?= $block->getSortIcon('Document Date') ?>
+                        </a>
+                    </th>
+                    <th scope="col" class="col id p-2 text-left">
+                        <a href="<?= $block->getSortLink('Ship-to Name')?>">
+                            <?= $escaper->escapeHtml(__('Bill To')) ?>
+                            <?= $block->getSortIcon('Ship-to Name') ?>
+                        </a>
+                    </th>
+                    <th scope="col" class="col id p-2 text-left">
+                        <a href="<?= $block->getSortLink('Amount Including VAT')?>">
+                            <?= $escaper->escapeHtml(__('Order Total')) ?>
+                            <?= $block->getSortIcon('Amount Including VAT') ?>
+                        </a>
+                    </th>
+                    <th scope="col" class="col id p-2 text-left"></th>
+                </tr>
+            </thead>
+            <tbody>
+                <?php foreach ($orders as $order): ?>
+                <tr class="align-top even:bg-gray-100">
+                    <td data-th="Order #" class="col id p-2"><?= $order["No."] ?></td>
+                    <td data-th="Status" class="col status p-2"><?= $block->getOrderStatus($order) ?></td>
+                    <td data-th="Date" class="col date p-2">
+                        <?= date_format(date_create($order["Document Date"]), "d-m-Y") ?></td>
+                    <td data-th="Ship To #" class="col id p-2"><?= $order["Ship-to Name"] ?></td>
+                    <td data-th="Total" class="col total p-2"><?= $order["Currency Code"] ?>
+                        <?= number_format((float)$order["Amount Including VAT"], 2, ',', '.') ?></td>
+                    <td data-th="Actions" class="col actions p-2">
+                        <a href="<?= $block->getViewUrl(urlencode($order["id"])) ?>" class="action view">
+                            <span><?= $escaper->escapeHtml(__("View Order")) ?></span>
+                        </a>
+                        <span class="text-secondary-lighter"> | </span>
+                        <a href="<?= $order["PDFUrl"] ?>" class="action order" target="_blank">
+                            <span>PDF</span>
+                        </a>
+                    </td>
+                </tr>
+                <?php endforeach; ?>
+            </tbody>
+        </table>
+    </div>
+    <?php else: ?>
+    <div class="message info empty"><span><?= $escaper->escapeHtml(__('No orders found.')) ?></span></div>
+    <?php endif; ?>
+</div>
+
+
+<?php if ($totalResults > $block->getPageSize()): ?>
+<div class="flex flex-col gap-2 md:flex-row md:items-center">
+    <?php
+            $totalPages = $ordersResponse["totalPages"];
+            $currentPage = $block->getPage();
+        ?>
+    <div>
+        <?= $escaper->escapeHtml(__('Page: %1 of %2', $currentPage, $totalPages)) ?>
+    </div>
+    <div class="flex flex-wrap justify-between items-center gap-2">
+        <?php if ($block->getPage() > 1): ?>
+        <a href="<?= $block->getPreviousPageUrl() ?>"
+            class="btn btn-secondary"><?= $escaper->escapeHtml(__('Previous')) ?>
+        </a>
+        <?php endif; ?>
+        <?php if ($block->getPage() > 1 && $block->getPage() < $ordersResponse["totalPages"]): ?>
+        -
+        <?php endif; ?>
+        <?php if ($block->getPage() < $ordersResponse["totalPages"]): ?>
+        <a href="<?= $block->getNextPageUrl() ?>" class="btn btn-secondary"><?= $escaper->escapeHtml(__('Next')) ?>
+        </a>
+        <?php endif; ?>
+    </div>
+</div>
+<?php endif; ?>
