@@ -3,7 +3,6 @@
 Below is a list of all sales order header fields
 All these fields are available in the API response, as well as any custom field added by customer/partner/other ISV
 
-"id": "CF62B3CE-1E04-EB11-81A2-E016CCC29A3B",
 "Document Type": 1,
 "Sell-to Customer No.": "C00010",
 "No.": "101030",
@@ -174,10 +173,14 @@ All these fields are available in the API response, as well as any custom field 
 "Allow Line Disc.": true,
 "Get Shipment Used": false,
 "Assigned User ID": "",
+"NC365 Web Order": false,
 "NC365 Staging Order No.": "",
 "NC365 Store Code": "",
+"NC365 Price Dummy Order": false,
+"NC365 Magento Status": "",
+"NC365 Increment ID": "",
 "Lines": []
-"PDFUrl": "https://commerce365.blob.core.windows.net/123456789/Order_101030_9FC9231F-8078-423A-B115-C31910169667.pdf",
+"PDFUrl": "https://commerce365.blob.core.windows.net/123456789/Order_101030_3FC1231F-8018-423B-B425-C31923169667.pdf",
 "TableNo": 36,
 "CustomerId": 6,
 
