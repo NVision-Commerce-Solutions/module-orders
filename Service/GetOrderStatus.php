@@ -21,7 +21,7 @@ class GetOrderStatus
      */
     public function execute(array $order): Phrase
     {
-        if (empty($order["Status"])) {
+        if (!isset($order["Status"])) {
             return __('Not Defined');
         }
 
