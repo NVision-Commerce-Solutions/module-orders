@@ -71,7 +71,7 @@ if (!empty($ordersResponse)) {
             </thead>
             <tbody>
                 <?php foreach ($orders as $order): ?>
-                <tr class="align-top even:bg-gray-100">
+                <tr class="even:bg-gray-100">
                     <td data-th="Order #" class="col id p-2"><?= $order["No."] ?></td>
                     <td data-th="Status" class="col status p-2"><?= $block->getOrderStatus($order) ?></td>
                     <td data-th="Date" class="col date p-2">
