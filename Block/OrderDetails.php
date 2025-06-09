@@ -50,4 +50,9 @@ class OrderDetails extends Template
     {
         return $this->getOrderStatus->execute($order);
     }
+
+    public function safeGet(array $array, string $key, $default = '')
+    {
+        return $array[$key] ?? $default;
+    }
 }

@@ -7,20 +7,20 @@ use Magento\Framework\Escaper;
 /** @var Escaper $escaper */
 
 $order = $block->getOrder();
-$orderLines = $order["Lines"];
+$orderLines = $block->safeGet($order, 'Lines', []);
 $status = $block->getOrderStatus($order);
-$trackingUrl = $order['Package Tracking URL SCNVN'] ?? '';
+$trackingUrl = $block->safeGet($order, 'Package Tracking URL SCNVN', '');
 ?>
 
 <div class="md:flex md:justify-between items-center mb-3">
     <div class="lg:flex items-center text-center md:text-left">
         <div class="lg:inline-block">
             <h2 class="text-2xl">
-                <span><?= $escaper->escapeHtml(__('Order # %1', $order["No."])) ?></span>
+                <span><?= $escaper->escapeHtml(__('Order # %1', $block->safeGet($order, 'No.'))) ?></span>
             </h2>
             <div class="order-date">
                 <span class="label"><?= $escaper->escapeHtml(__('Order date:')) ?></span>
-                <date><?= date_format(date_create($order["Document Date"]), "d-m-Y") ?></date>
+                <date><?= date_format(date_create($block->safeGet($order, 'Document Date')), "d-m-Y") ?></date>
             </div>
         </div>
         <div class="mt-3 md:mt-0 lg:inline-block lg:ml-5">
@@ -30,19 +30,19 @@ $trackingUrl = $order['Package Tracking URL SCNVN'] ?? '';
         </div>
     </div>
     <div class="actions">
-        <a href="<?= $escaper-> escapeUrl($order["PDFUrl"]) ?>" class="btn btn-secondary mb-4 order" target="_blank"
-            rel="noopener noreferrer">
-            <span><?= $escaper-> escapeHtml(__('Download PDF')) ?></span>
+        <a href="<?= $escaper->escapeUrl($block->safeGet($order, 'PDFUrl')) ?>" class="btn btn-secondary mb-4 order" target="_blank"
+           rel="noopener noreferrer">
+            <span><?= $escaper->escapeHtml(__('Download PDF')) ?></span>
         </a>
     </div>
 </div>
 
 <?php if ($trackingUrl !== ''): ?>
-<div class="message success message-success">
-    <a href="<?= $escaper-> escapeUrl($trackingUrl) ?>" class="action order" target="_blank" rel="noopener noreferrer">
-        <span><?= $escaper->escapeHtml(__('Track & Trace (By Commerce 365 for Sendcloud)'))?></span>
-    </a>
-</div>
+    <div class="message success message-success">
+        <a href="<?= $escaper->escapeUrl($trackingUrl) ?>" class="action order" target="_blank" rel="noopener noreferrer">
+            <span><?= $escaper->escapeHtml(__('Track & Trace (By Commerce 365 for Sendcloud)'))?></span>
+        </a>
+    </div>
 <?php endif; ?>
 
 <div class="order-details-items ordered">
@@ -68,14 +68,14 @@ $trackingUrl = $order['Package Tracking URL SCNVN'] ?? '';
             <tbody>
             <?php foreach ($orderLines as $orderLine): ?>
                 <?php
-                $itemNo = ((int)$orderLine["Type"] > 0) ? $orderLine["No."] : '';
-                $isProduct = (int)$orderLine["Type"] > 0;
-                $qty = max((float)$orderLine["Quantity"], 1);
+                $itemNo = ((int)$block->safeGet($orderLine, 'Type') > 0) ? $block->safeGet($orderLine, 'No.') : '';
+                $isProduct = (int)$block->safeGet($orderLine, 'Type') > 0;
+                $qty = max((float)$block->safeGet($orderLine, 'Quantity'), 1);
                 ?>
                 <tr class="block md:table-row border-b md:border-0 even:bg-gray-50">
                     <td class="block md:table-cell p-2 md:align-top">
                         <span class="md:hidden font-medium"><?= __('Product Name') ?>: </span>
-                        <strong><?= $escaper->escapeHtml($orderLine["Description"]) ?></strong>
+                        <strong><?= $escaper->escapeHtml($block->safeGet($orderLine, 'Description')) ?></strong>
                     </td>
                     <td class="block md:table-cell p-2 md:align-top">
                         <span class="md:hidden font-medium"><?= __('SKU') ?>: </span>
@@ -84,19 +84,19 @@ $trackingUrl = $order['Package Tracking URL SCNVN'] ?? '';
                     <td class="block md:table-cell p-2 md:align-top">
                         <span class="md:hidden font-medium"><?= __('Price') ?>: </span>
                         <?php if ($isProduct): ?>
-                            <?= $orderLine["Currency Code"] ?>
-                            <?= number_format((float)$orderLine["Amount"] / $qty, 2, ',', '.') ?>
+                            <?= $block->safeGet($orderLine, 'Currency Code') ?>
+                            <?= number_format((float)$block->safeGet($orderLine, 'Amount') / $qty, 2, ',', '.') ?>
                         <?php endif; ?>
                     </td>
                     <td class="block md:table-cell text-right p-2 md:align-top">
                         <span class="md:hidden font-medium"><?= __('Qty') ?>: </span>
-                        <?= $escaper->escapeHtml($orderLine["Quantity"]) ?>
+                        <?= $escaper->escapeHtml($block->safeGet($orderLine, 'Quantity')) ?>
                     </td>
                     <td class="block md:table-cell p-2 text-right md:align-top">
                         <span class="md:hidden font-medium"><?= __('Subtotal') ?>: </span>
                         <?php if ($isProduct): ?>
-                            <?= $orderLine["Currency Code"] ?>
-                            <?= number_format((float)$orderLine["Line Amount"], 2, ',', '.') ?>
+                            <?= $block->safeGet($orderLine, 'Currency Code') ?>
+                            <?= number_format((float)$block->safeGet($orderLine, 'Line Amount'), 2, ',', '.') ?>
                         <?php endif; ?>
                     </td>
                 </tr>
@@ -107,24 +107,24 @@ $trackingUrl = $order['Package Tracking URL SCNVN'] ?? '';
                 <td colspan="4" class="hidden md:table-cell text-right p-2 font-medium"><?= __('Subtotal') ?></td>
                 <td class="p-2 text-right font-medium">
                     <span class="md:hidden block"><?= __('Subtotal') ?>: </span>
-                    <?= $order["Currency Code"] ?>
-                    <?= number_format((float)$order["Amount"], 2, ',', '.') ?>
+                    <?= $block->safeGet($order, 'Currency Code') ?>
+                    <?= number_format((float)$block->safeGet($order, 'Amount'), 2, ',', '.') ?>
                 </td>
             </tr>
             <tr>
                 <td colspan="4" class="hidden md:table-cell text-right p-2 font-medium"><?= __('VAT') ?></td>
                 <td class="p-2 text-right font-medium">
                     <span class="md:hidden block"><?= __('VAT') ?>: </span>
-                    <?= $order["Currency Code"] ?>
-                    <?= number_format((float)$order["Amount Including VAT"] - (float)$order["Amount"], 2, ',', '.') ?>
+                    <?= $block->safeGet($order, 'Currency Code') ?>
+                    <?= number_format((float)$block->safeGet($order, 'Amount Including VAT') - (float)$block->safeGet($order, 'Amount'), 2, ',', '.') ?>
                 </td>
             </tr>
             <tr class="font-semibold">
                 <td colspan="4" class="hidden md:table-cell text-right p-2"><?= __('Grand Total') ?></td>
                 <td class="p-2 text-right">
                     <span class="md:hidden block"><?= __('Grand Total') ?>: </span>
-                    <?= $order["Currency Code"] ?>
-                    <?= number_format((float)$order["Amount Including VAT"], 2, ',', '.') ?>
+                    <?= $block->safeGet($order, 'Currency Code') ?>
+                    <?= number_format((float)$block->safeGet($order, 'Amount Including VAT'), 2, ',', '.') ?>
                 </td>
             </tr>
             </tfoot>
@@ -147,31 +147,31 @@ $trackingUrl = $order['Package Tracking URL SCNVN'] ?? '';
             <div class="order-shipping-address">
                 <strong class="block text-lg mb-2"><?= $escaper->escapeHtml(__('Shipping Address')) ?></strong>
                 <address class="not-italic">
-                    <?= $escaper->escapeHtml($order["Ship-to Name"]); ?><br />
-                    <?= $escaper->escapeHtml($order["Ship-to Address"]); ?><br />
-                    <?= $escaper->escapeHtml($order["Ship-to City"]); ?>,
-                    <?= $escaper->escapeHtml($order["Ship-to Post Code"]); ?><br />
-                    <?= $escaper->escapeHtml($order["Ship-to Country/Region Code"]); ?><br />
+                    <?= $escaper->escapeHtml($block->safeGet($order, 'Ship-to Name')) ?><br />
+                    <?= $escaper->escapeHtml($block->safeGet($order, 'Ship-to Address')) ?><br />
+                    <?= $escaper->escapeHtml($block->safeGet($order, 'Ship-to City')) ?>,
+                    <?= $escaper->escapeHtml($block->safeGet($order, 'Ship-to Post Code')) ?><br />
+                    <?= $escaper->escapeHtml($block->safeGet($order, 'Ship-to Country/Region Code')) ?><br />
                 </address>
             </div>
             <div class="order-shipping-method">
                 <strong class="block text-lg mb-2"><?= $escaper->escapeHtml(__('Shipping Method')) ?></strong>
-                <div><?= $escaper->escapeHtml($order["Shipment Method Code"]); ?></div>
+                <div><?= $escaper->escapeHtml($block->safeGet($order, 'Shipment Method Code')) ?></div>
             </div>
             <div class="order-billing-address">
                 <strong class="block text-lg mb-2"><?= $escaper->escapeHtml(__('Billing Address')) ?></strong>
                 <address class="not-italic">
-                    <?= $escaper->escapeHtml($order["Bill-to Name"]); ?><br />
-                    <?= $escaper->escapeHtml($order["Bill-to Address"]); ?><br />
-                    <?= $escaper->escapeHtml($order["Bill-to City"]); ?>,
-                    <?= $escaper->escapeHtml($order["Bill-to Post Code"]); ?><br />
-                    <?= $escaper->escapeHtml($order["Bill-to Country/Region Code"]); ?><br />
+                    <?= $escaper->escapeHtml($block->safeGet($order, 'Bill-to Name')) ?><br />
+                    <?= $escaper->escapeHtml($block->safeGet($order, 'Bill-to Address')) ?><br />
+                    <?= $escaper->escapeHtml($block->safeGet($order, 'Bill-to City')) ?>,
+                    <?= $escaper->escapeHtml($block->safeGet($order, 'Bill-to Post Code')) ?><br />
+                    <?= $escaper->escapeHtml($block->safeGet($order, 'Bill-to Country/Region Code')) ?><br />
                 </address>
             </div>
             <div class="box box-order-billing-method">
                 <strong class="block text-lg mb-2"><?= $escaper->escapeHtml(__('Payment Method')) ?></strong>
                 <dl class="payment-method checkmemo">
-                    <?= $escaper->escapeHtml($order["Payment Method Code"]); ?>
+                    <?= $escaper->escapeHtml($block->safeGet($order, 'Payment Method Code')) ?>
                 </dl>
             </div>
         </div>
