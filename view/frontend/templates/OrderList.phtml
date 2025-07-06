@@ -27,47 +27,67 @@ if (!empty($ordersResponse)) {
     <table class="data table table-order-items history" id="my-orders-table">
         <thead>
         <tr>
-            <th scope="col" class="col id">
-                <a href="<?= $this->getSortLink('No.')?>">
-                    <?= __('Order #') ?>
-                    <?= $this->getSortIcon('No.') ?>
-                </a>
-            </th>
+            <?php if($this->isColumnExists($orders, 'No.')): ?>
+                <th scope="col" class="col id">
+                    <a href="<?= $this->getSortLink('No.')?>">
+                        <?= __('Order #') ?>
+                        <?= $this->getSortIcon('No.') ?>
+                    </a>
+                </th>
+            <?php endif; ?>
+            <?php if($this->isColumnExists($orders, 'Status')): ?>
             <th scope="col" class="col id">
                 <a href="<?= $this->getSortLink('Status')?>">
                     <?= __('Status') ?>
                     <?= $this->getSortIcon('Status') ?>
                 </a>
             </th>
+            <?php endif; ?>
+            <?php if($this->isColumnExists($orders, 'Document Date')): ?>
             <th scope="col" class="col date">
                 <a href="<?= $this->getSortLink('Document Date')?>">
                     <?= __('Date') ?>
                     <?= $this->getSortIcon('Document Date') ?>
                 </a>
             </th>
+            <?php endif; ?>
+            <?php if($this->isColumnExists($orders, 'Ship-to Name')): ?>
             <th scope="col" class="col shipping">
                 <a href="<?= $this->getSortLink('Ship-to Name')?>">
                     <?= __('Bill To') ?>
                     <?= $this->getSortIcon('Ship-to Name') ?>
                 </a>
             </th>
+            <?php endif; ?>
+            <?php if($this->isColumnExists($orders, 'Amount Including VAT')): ?>
             <th scope="col" class="col total">
                 <a href="<?= $this->getSortLink('Amount Including VAT')?>">
                     <?= __('Order Total') ?>
                     <?= $this->getSortIcon('Amount Including VAT') ?>
                 </a>
             </th>
+            <?php endif; ?>
             <th scope="col" class="col actions">&nbsp;</th>
         </tr>
         </thead>
         <tbody>
         <?php foreach ($orders as $order): ?>
             <tr>
-                <td data-th="Order #" class="col id"><?= $order["No."] ?></td>
-                <td data-th="Status" class="col status"><?= $block->getOrderStatus($order) ?></td>
-                <td data-th="Date" class="col date"><?= date_format(date_create($order["Document Date"]), "d-m-Y") ?></td>
-                <td data-th="Ship To #" class="col id"><?= $order["Ship-to Name"] ?></td>
-                <td data-th="Total" class="col total"><?= $order["Currency Code"] ?> <?= number_format((float)$order["Amount Including VAT"], 2, ',', '.') ?></td>
+                <?php if($this->isColumnExists($orders, 'No.')): ?>
+                    <td data-th="Order #" class="col id"><?= $order["No."] ?></td>
+                <?php endif; ?>
+                <?php if($this->isColumnExists($orders, 'Status')): ?>
+                    <td data-th="Status" class="col status"><?= $block->getOrderStatus($order) ?></td>
+                <?php endif; ?>
+                <?php if($this->isColumnExists($orders, 'Document Date')): ?>
+                    <td data-th="Date" class="col date"><?= date_format(date_create($order["Document Date"]), "d-m-Y") ?></td>
+                <?php endif; ?>
+                <?php if($this->isColumnExists($orders, 'Ship-to Name')): ?>
+                    <td data-th="Ship To #" class="col id"><?= $order["Ship-to Name"] ?></td>
+                <?php endif; ?>
+                <?php if($this->isColumnExists($orders, 'Amount Including VAT')): ?>
+                    <td data-th="Total" class="col total"><?= $order["Currency Code"] ?> <?= number_format((float)$order["Amount Including VAT"], 2, ',', '.') ?></td>
+                <?php endif; ?>
                 <td data-th="Actions" class="col actions">
                     <a href="<?= $this->getViewUrl(urlencode($order["id"])) ?>" class="action view">
                         <span><?= __("View Order") ?></span>
@@ -91,13 +111,13 @@ if (!empty($ordersResponse)) {
     </div>
     <div>
         <?php if ($block->getPage() > 1): ?>
-        <a href="<?= $this->getPreviousPageUrl() ?>" class="action order"><?= __('Previous') ?></a>
+        <a href="<?= $block->getPreviousPageUrl() ?>" class="action order"><?= __('Previous') ?></a>
         <?php endif; ?>
         <?php if ($block->getPage() > 1 && $block->getPage() < $ordersResponse["totalPages"]): ?>
             -
         <?php endif; ?>
         <?php if ($block->getPage() < $ordersResponse["totalPages"]): ?>
-        <a href="<?= $this->getNextPageUrl() ?>" class="action order"><?= __('Next') ?></a>
+        <a href="<?= $block->getNextPageUrl() ?>" class="action order"><?= __('Next') ?></a>
         <?php endif; ?>
     </div>
 <?php endif; ?>
