@@ -69,14 +69,14 @@ if (!empty($ordersResponse)) {
                     </th>
                     <?php endif; ?>
                     <?php if($this->isColumnExists($orders, 'Amount Including VAT')): ?>
-                    <th scope="col" class="col id p-2 text-left">
+                    <th scope="col" class="col id p-2 text-right">
                         <a href="<?= $block->getSortLink('Amount Including VAT')?>">
                             <?= $escaper->escapeHtml(__('Order Total')) ?>
                             <?= $block->getSortIcon('Amount Including VAT') ?>
                         </a>
                     </th>
                     <?php endif; ?>
-                    <th scope="col" class="col id p-2 text-left"></th>
+                    <th scope="col" class="col id p-2 text-right"></th>
                 </tr>
             </thead>
             <tbody>
@@ -96,10 +96,10 @@ if (!empty($ordersResponse)) {
                         <td data-th="Ship To #" class="col id p-2"><?= $order["Ship-to Name"] ?></td>
                     <?php endif; ?>
                     <?php if($this->isColumnExists($orders, 'Amount Including VAT')): ?>
-                        <td data-th="Total" class="col total p-2"><?= $order["Currency Code"] ?>
+                        <td data-th="Total" class="col total p-2 text-right"><?= $order["Currency Code"] ?>
                             <?= number_format((float)$order["Amount Including VAT"], 2, ',', '.') ?></td>
                     <?php endif; ?>
-                    <td data-th="Actions" class="col actions p-2">
+                    <td data-th="Actions" class="col actions p-2 text-right">
                         <a href="<?= $block->getViewUrl(urlencode($order["id"])) ?>" class="action view">
                             <span><?= $escaper->escapeHtml(__("View Order")) ?></span>
                         </a>
